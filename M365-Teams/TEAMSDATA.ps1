@@ -1,5 +1,7 @@
+Install-Module -Name MicrosoftTeams -RequiredVersion 0.9.6
+
 # Connect to Microsoft Teams
-Connect-MicrosoftTeams -AccountId bctec@kinghenry.org.uk
+Connect-MicrosoftTeams -AccountId admin@YOUR_DOMAIN
 
 # Retrieve all Teams groups
 $AllTeams = Get-Team
@@ -30,3 +32,4 @@ foreach ($Team in $AllTeams) {
 
 # Export the Team data to a CSV file
 $TeamList | Export-Csv -Path "C:\temp\TeamsData.csv" -NoTypeInformation
+

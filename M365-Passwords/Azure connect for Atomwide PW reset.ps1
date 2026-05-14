@@ -14,7 +14,7 @@ $userUPN = Read-Host -Prompt "Enter the Username of the user that requires a pas
 $newPassword = Read-Host -Prompt "Enter a new password for the user"
 Write-Host "Changing user $userUPN password to $newPassword"
 
-#$userUPN="test@horstedschool.co.uk"
+#$userUPN="test@YOUR_DOMAIN"
 #$newPassword="password2"
 
 #Set Password Complexity to False

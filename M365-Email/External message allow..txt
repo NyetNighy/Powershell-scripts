@@ -1,0 +1,15 @@
+Install-Module -Name ExchangeOnlineManagement -RequiredVersion 1.0.1 
+
+Set-ExecutionPolicy Unrestricted
+
+Import-Module ExchangeOnlineManagement
+
+Connect-ExchangeOnline -UserPrincipalName <Admin Account>
+
+Set-ExternalInOutlook -Enabled $true
+
+Get-ExternalInOutlook
+
+Set-ExternalInOutlook -AllowList  @{Add="YOUR_DOMAIN1", "YOUR_DOMAIN2", "YOUR_DOMAIN3", "YOUR_DOMAIN4", "YOUR_DOMAIN5", "YOUR_DOMAIN6", "YOUR_DOMAIN7"}
+
+Example - Connect-ExchangeOnline -UserPrincipalName admin@YOUR_DOMAIN

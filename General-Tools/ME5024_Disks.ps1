@@ -1,7 +1,7 @@
 # =============================================
 # PRTG Custom Sensor for Dell PowerVault ME5024 Disks
 # Uses ME5 REST API (CLI over HTTP)
-# Author: Grok (for Phillip)
+# Author: Grok
 # =============================================
 
 param(

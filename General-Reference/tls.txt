@@ -1,4 +1,4 @@
-Phillip - For reference this Powershell script is the fix for the issue. This has to be done line by line is normal Powershell, Powershell ISE also wouldn't load due to the error.
+YOUR_NAME - For reference this Powershell script is the fix for the issue. This has to be done line by line is normal Powershell, Powershell ISE also wouldn't load due to the error.
 New-Item 'HKLM:\SOFTWARE\WOW6432Node\Microsoft\.NETFramework\v4.0.30319' -Force | Out-Null
 New-ItemProperty -path 'HKLM:\SOFTWARE\WOW6432Node\Microsoft\.NETFramework\v4.0.30319' -name 'SystemDefaultTlsVersions' -value '1' -PropertyType 'DWord' -Force | Out-Null
 New-ItemProperty -path 'HKLM:\SOFTWARE\WOW6432Node\Microsoft\.NETFramework\v4.0.30319' -name 'SchUseStrongCrypto' -value '1' -PropertyType 'DWord' -Force | Out-Null
