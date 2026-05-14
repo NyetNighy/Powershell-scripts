@@ -1,2 +1,2 @@
 # Powershell-scripts
-Assortment of poowershell scripts for various tasks.
+Assortment of powershell scripts for various tasks.
