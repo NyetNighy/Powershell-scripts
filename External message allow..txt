@@ -1,0 +1,15 @@
+Install-Module -Name ExchangeOnlineManagement -RequiredVersion 1.0.1 
+
+Set-ExecutionPolicy Unrestricted
+
+Import-Module ExchangeOnlineManagement
+
+Connect-ExchangeOnline -UserPrincipalName <Admin Account>
+
+Set-ExternalInOutlook -Enabled $true
+
+Get-ExternalInOutlook
+
+Set-ExternalInOutlook -AllowList  @{Add="deanwood.medway.sch.uk", "thamesviewprimary.medway.sch.uk", "mcps.school", "thatrust.org.uk", "templemill.medway.sch.uk", "waterfront-that.org.uk", "thehowardschool.co.uk"}
+
+Example - Connect-ExchangeOnline -UserPrincipalName bctecltd@deanwood.medway.sch.uk

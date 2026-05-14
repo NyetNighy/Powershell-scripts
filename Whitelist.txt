@@ -1,0 +1,11 @@
+# Connect to Office 365
+Connect-EXOPSSession -UserPrincipalName admin@contoso.com
+
+# Import the CSV file that contains the list of email addresses to add to the whitelist
+$EmailAddresses = Import-Csv -Path "C:\Whitelist.csv" | Select-Object -ExpandProperty EmailAddress
+
+# Create or update the Hosted Content Filter policy with the specified email addresses
+$EmailAddresses | ForEach-Object { New-HostedContentFilterPolicy -Name "Global Whitelist" -Enabled $true -TrustedSenderAndDomain $_ }
+
+# Verify that the email addresses have been added to the global whitelist
+Get-HostedContentFilterPolicy -Identity "Global Whitelist" | Select-Object -ExpandProperty TrustedSenderAndDomain

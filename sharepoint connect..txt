@@ -1,0 +1,2 @@
+Connect-SPOService -Url https://(Domain)-admin.sharepoint.com
+Set-SPOTenant -DisableAddShortcutsToOneDrive $false

@@ -1,0 +1,6 @@
+Get-WmiObject Win32_Product -ComputerName $computername | Select-Object -Property IdentifyingNumber, Name
+#This gives you everything that is installed on the target computer. Change the $Computername to the computers name.
+
+wmic product get name
+
+wmic product where name="#Product name" call uninstall /nointeractive

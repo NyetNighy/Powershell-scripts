@@ -1,0 +1,10 @@
+Download the SharePoint Online Management Shell.
+
+Connect-SPOService -Url https://<Domain>-admin.sharepoint.com -Credential <Admin Account>
+
+Get-SPODeletedSite -Identity <URL>
+If you don't know the URL of the deleted OneDrive, run the following command:
+Get-SPODeletedSite -IncludeOnlyPersonalSite | FT url
+If the OneDrive appears in the results, it can be restored.Restore the OneDrive to an active state:
+Restore-SPODeletedSite -Identity <URL>Assign a site collection administrator to the OneDrive to access the needed data:
+Set-SPOUser -Site <URL> -LoginName <UPNofDesiredAdmin> -IsSiteCollectionAdmin $True

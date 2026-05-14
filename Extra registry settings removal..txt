@@ -1,0 +1,1 @@
+Remove-GPRegistryValue -Name "(Computers) Windows 10 Global Configuration" -Key "HKLM\Software\Policies\Microsoft\Windows\SkyDrive" -ValueName "DisableFileSync"

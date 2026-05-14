@@ -1,0 +1,8 @@
+$credential = Get-Credential
+Import-Module MSOnline
+Connect-MsolService -Credential $credential
+Set-ExecutionPolicy “RemoteSigned” -Scope Process -Confirm:$false
+Set-ExecutionPolicy “RemoteSigned” -Scope CurrentUser -Confirm:$false
+Import-Module ExchangeOnlineManagement
+Connect-ExchangeOnline -UserPrincipalName <UPN>
+Get-EXOMailbox -filter {EmailAddresses -eq "enquiries@babingtonhouse.com"}

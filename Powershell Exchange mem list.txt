@@ -1,0 +1,30 @@
+
+$DGName = "CasepakAll"
+Get-DynamicDistributionGroupMember -Identity $DGName | Select Name, PrimarySMTPAddress |
+Export-CSV "C:\Distribution-List-Members-All.csv" -NoTypeInformation -Encoding UTF8
+
+Get-Recipient -RecipientPreviewFilter (get-dynamicdistributiongroup group1@contoso.com).RecipientFilter -OrganizationalUnit $group.RecipientContainer | Select Displayname,alias,userprincipalname,emailaddress | Export-Csv "c:\output.csv" -Notypeinformation 
+
+$DGName = Get-DynamicDistributionGroup -Identity CasepakAll
+Get-Recipient -RecipientPreviewFilter ($DGName.RecipientFilter)
+
+
+[09:01] Steve Baigrie
+$members = Get-DynamicDistributionGroup "CasepakAll"
+Get-Recipient -RecipientPreviewFilter $members.RecipientFilter | select Displayname,PrimarySmtpAddress > "C:\DLISTMEM\DLISTMEM.txt"
+
+
+
+$DGName = "Casepak CPF"
+Get-DistributionGroupMember -Identity $DGName | Select Name, PrimarySMTPAddress |
+Export-CSV "C:\DLISTMEM\CasepakCPF.txt"-NoTypeInformation -Encoding UTF8
+
+$DGName = "CasepakMRF"
+Get-DistributionGroupMember -Identity $DGName | Select Name, PrimarySMTPAddress |
+Export-CSV "C:\DLISTMEM\CasepakMRF.txt"-NoTypeInformation -Encoding UTF8
+
+
+
+
+$FTE = Get-DynamicDistributionGroup CasepakAll; Get-Recipient -RecipientPreviewFilter $FTE.RecipientFilter -OrganizationalUnit $FTE.RecipientContainer|Sort-Object Name,recipienttype
+

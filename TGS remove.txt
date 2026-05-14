@@ -1,0 +1,35 @@
+# Install and import the Microsoft 365 PowerShell module
+Install-Module -Name Microsoft365 -Force -AllowClobber
+Import-Module Microsoft365
+
+# Connect to Microsoft 365 (you will be prompted for credentials)
+Connect-Microsoft365
+
+# Specify the domain you want to target
+$domainToRemove = "example.com"
+
+# Get all users from the specified domain
+$usersToRemove = Get-MsolUser -All | Where-Object { $_.UserPrincipalName -like "*@$domainToRemove" }
+
+
+
+
+# Connect to Azure AD
+Connect-MsolService
+
+# Get all users with a specific domain (replace 'example.com' with your domain)
+$usersToRemove = Get-MsolUser -DomainName example.com
+
+# Remove each user
+foreach ($user in $usersToRemove) {
+    Remove-MsolUser -UserPrincipalName $user.UserPrincipalName -Force
+}
+
+
+# Remove each user
+foreach ($user in $usersToRemove) {
+    Remove-MsolUser -UserPrincipalName $user.UserPrincipalName -Force
+}
+
+# Output a summary
+Write-Host "Removed $($usersToRemove.Count) users from $domainToRemove domain."

@@ -1,0 +1,15 @@
+# Replace 'YourGroupName' with the actual group name
+
+$groupName = 'YourGroupName'
+
+# Get the mail-enabled security group
+$mailEnabledGroup = Get-AzureADGroup -Filter "DisplayName eq '$groupName'"
+
+if ($mailEnabledGroup -eq $null) {
+    Write-Host "Mail-enabled security group '$groupName' not found."
+} else {
+    # Convert the mail-enabled security group to a security group
+    $mailEnabledGroup | Set-AzureADGroup -GroupTypes Security
+
+    Write-Host "Mail-enabled security group '$groupName' has been converted to a security group."
+}

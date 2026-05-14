@@ -1,0 +1,1 @@
+ Reg add <Registry path> /v <Registry Value> /t REG_DWORD /d <Binary Value>

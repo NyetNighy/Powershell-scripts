@@ -1,0 +1,3 @@
+Install-Module -Name ExchangeOnlineManagement -force
+Connect-ExchangeOnline
+Set-OrganizationConfig -OnlineMeetingsByDefaultEnabled $False
