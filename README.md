@@ -2,9 +2,7 @@
 
 General-purpose PowerShell scripts for Microsoft 365 administration, Exchange Online, Azure AD, SharePoint/OneDrive, Active Directory, and security tooling.
 
-> ⚠️ **Sensitive data notice** — Several scripts contain hardcoded tenant/admin credentials or identifying details. See [SECURITY_NOTES.md](./SECURITY_NOTES.md) before sharing or publishing.
 
----
 
 ## 📂 Folder Structure
 
@@ -74,24 +72,9 @@ General-purpose PowerShell scripts for Microsoft 365 administration, Exchange On
 | `ME5024_Disks.ps1` | PRTG custom sensor for Dell PowerVault ME5024 storage array (REST API) |
 | `replace.ps1` | Fix curly quotes in PowerShell files (utility) |
 
----
-
-## 🏷️ Tags
-
-`#m365` `#exchange` `#azure-ad` `#sharepoint` `#onedrive` `#active-directory` `#security` `#audit` `#email` `#powershell`
-
----
-
-## 📋 Requirements
 
 - **Exchange Online** scripts → `ExchangeOnlineManagement` module v3.9.0+
 - **Microsoft Graph** scripts → `Microsoft.Graph` and `Microsoft.Graph.Beta`
 - **SharePoint/PnP** scripts → `SharePointPnPPowerShellOnline` or `PnP.PowerShell`
 - **Active Directory** scripts → RSAT AD module on Windows
 - All scripts tested on **Windows PowerShell 5.1** or **PowerShell 7+**
-
----
-
-## ⚠️ Credentials & Sensitive Data
-
-See [SECURITY_NOTES.md](./SECURITY_NOTES.md) — some scripts contain hardcoded tenant names, admin UPNs, client IDs, or other identifying information. **Do not share or publish without reviewing and sanitising those files first.**
