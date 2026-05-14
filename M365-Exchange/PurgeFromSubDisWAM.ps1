@@ -2,7 +2,7 @@
 $UPN = Read-Host -Prompt 'Enter the User Principal Name (UPN) for connecting to Security & Compliance'
 
 # Prompt the user for the compliance search name
-$complianceSearchName = Read-Host -Prompt 'Enter the Compliance Search Name (e.g., PurgeAbbeyGazetteEmail)'
+$complianceSearchName = Read-Host -Prompt 'Enter the Compliance Search Name (e.g., PurgeClientEmail)'
 
 # Prompt the user for the ContentMatchQuery
 $fromCommand = Read-Host -Prompt 'Enter the ContentMatchQuery (e.g., from:example@domain.com)'

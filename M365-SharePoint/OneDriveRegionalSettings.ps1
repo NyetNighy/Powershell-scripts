@@ -1,5 +1,5 @@
 # === CONFIGURATION ===
-$adminUrl = "https://bcteccouk-admin.sharepoint.com/"   # <-- CHANGE THIS
+$adminUrl = "https://YOUR_TENANT-admin.sharepoint.com/"   # <-- CHANGE THIS
 $localeId   = 2057      # 2057 = English (United Kingdom)
 $timeZoneId = 2         # 2 = GMT Standard Time (UK). Run Get-PnPTimeZoneId to see all
 

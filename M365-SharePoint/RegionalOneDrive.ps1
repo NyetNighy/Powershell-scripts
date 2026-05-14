@@ -1,6 +1,6 @@
-$AdminUrl = "https://bcteccouk-admin.sharepoint.com"
-$ClientId = "23cccbe2-78f8-4659-8c4e-d7f828df07d4"
-$AdminUser = "BCTecLtd@bcteccouk.onmicrosoft.com"
+$AdminUrl = "https://YOUR_TENANT-admin.sharepoint.com"
+$ClientId = "YOUR_AZURE_AD_APP_CLIENT_ID"
+$AdminUser = "admin@YOUR_TENANT.onmicrosoft.com"
 
 # Connect once
 $AdminConnection = Connect-PnPOnline `
