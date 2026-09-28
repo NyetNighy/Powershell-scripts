@@ -1,13 +1,49 @@
-# Connect (do this once)
-Connect-MgGraph -Scopes "AuditLog.Read.All"
+#Requires -Modules Microsoft.Graph.Reports
+<#
+.SYNOPSIS
+    Export Microsoft Graph sign-in audit logs to CSV (fully flattened).
+.PARAMETER OutputPath
+    Destination CSV path. Default: SignInLogs_COMPLETE_<timestamp>.csv in the current directory.
+.PARAMETER Connect
+    Connect to Graph with AuditLog.Read.All before export (default: true).
+.PARAMETER Disconnect
+    Disconnect Graph session after export (default: true).
+.EXAMPLE
+    .\ExportSignLogs.ps1
+.EXAMPLE
+    .\ExportSignLogs.ps1 -OutputPath D:\Reports\signins.csv
+#>
+[CmdletBinding()]
+param(
+    [Parameter()]
+    [string]$OutputPath = "",
 
-# Pull ALL sign-in logs and fully flatten everything
+    [Parameter()]
+    [bool]$Connect = $true,
+
+    [Parameter()]
+    [bool]$Disconnect = $true
+)
+
+if (-not $OutputPath) {
+    $OutputPath = Join-Path -Path (Get-Location).Path -ChildPath ("SignInLogs_COMPLETE_{0:yyyyMMdd_HHmm}.csv" -f (Get-Date))
+}
+
+$outputDir = Split-Path -Parent $OutputPath
+if ($outputDir -and -not (Test-Path -LiteralPath $outputDir)) {
+    New-Item -ItemType Directory -Path $outputDir -Force | Out-Null
+}
+
+if ($Connect) {
+    Connect-MgGraph -Scopes "AuditLog.Read.All" -NoWelcome
+}
+
+Write-Host "Fetching sign-in logs (this may take a while)..." -ForegroundColor Cyan
 $AllSignIns = Get-MgAuditLogSignIn -All
 
 $Expanded = $AllSignIns | ForEach-Object {
     $signIn = $_
 
-    # Start with all top-level properties
     $obj = [pscustomobject]@{
         Id                      = $signIn.Id
         CreatedDateTime         = $signIn.CreatedDateTime
@@ -29,61 +65,69 @@ $Expanded = $AllSignIns | ForEach-Object {
         StatusErrorCode         = $signIn.Status.ErrorCode
         StatusFailureReason     = $signIn.Status.FailureReason
         StatusAdditionalDetails = $signIn.Status.AdditionalDetails
+        City                    = $null
+        State                   = $null
+        Country                 = $null
+        Latitude                = $null
+        Longitude               = $null
+        DeviceId                = $null
+        DeviceOS                = $null
+        DeviceBrowser           = $null
+        DeviceCompliant         = $null
+        DeviceManaged           = $null
+        MFA_Method              = $null
+        MFA_Result              = $null
+        AuthenticationSteps     = $null
+        CA_Policies             = $null
+        CA_Results              = $null
+        TokenIssuerType         = $signIn.TokenIssuerType
     }
 
-    # Location
     if ($signIn.Location) {
-        Add-Member -InputObject $obj -NotePropertyName "City"      -NotePropertyValue $signIn.Location.City -PassThru
-        Add-Member -InputObject $obj -NotePropertyName "State"     -NotePropertyValue $signIn.Location.State -PassThru
-        Add-Member -InputObject $obj -NotePropertyName "Country"   -NotePropertyValue $signIn.Location.CountryOrRegion -PassThru
-        Add-Member -InputObject $obj -NotePropertyName "Latitude"  -NotePropertyValue $signIn.Location.GeoCoordinates.Latitude -PassThru
-        Add-Member -InputObject $obj -NotePropertyName "Longitude" -NotePropertyValue $signIn.Location.GeoCoordinates.Longitude -PassThru
+        $obj.City = $signIn.Location.City
+        $obj.State = $signIn.Location.State
+        $obj.Country = $signIn.Location.CountryOrRegion
+        if ($signIn.Location.GeoCoordinates) {
+            $obj.Latitude = $signIn.Location.GeoCoordinates.Latitude
+            $obj.Longitude = $signIn.Location.GeoCoordinates.Longitude
+        }
     }
 
-    # Device Detail
     if ($signIn.DeviceDetail) {
-        Add-Member -InputObject $obj -NotePropertyName "DeviceId"        -NotePropertyValue $signIn.DeviceDetail.DeviceId -PassThru
-        Add-Member -InputObject $obj -NotePropertyName "DeviceOS"        -NotePropertyValue $signIn.DeviceDetail.OperatingSystem -PassThru
-        Add-Member -InputObject $obj -NotePropertyName "DeviceBrowser"   -NotePropertyValue $signIn.DeviceDetail.Browser -PassThru
-        Add-Member -InputObject $obj -NotePropertyName "DeviceCompliant" -NotePropertyValue $signIn.DeviceDetail.IsCompliant -PassThru
-        Add-Member -InputObject $obj -NotePropertyName "DeviceManaged"   -NotePropertyValue $signIn.DeviceDetail.IsManaged -PassThru
+        $obj.DeviceId = $signIn.DeviceDetail.DeviceId
+        $obj.DeviceOS = $signIn.DeviceDetail.OperatingSystem
+        $obj.DeviceBrowser = $signIn.DeviceDetail.Browser
+        $obj.DeviceCompliant = $signIn.DeviceDetail.IsCompliant
+        $obj.DeviceManaged = $signIn.DeviceDetail.IsManaged
     }
 
-    # MFA Detail
     if ($signIn.MfaDetail) {
-        Add-Member -InputObject $obj -NotePropertyName "MFA_Method" -NotePropertyValue $signIn.MfaDetail.AuthMethod -PassThru
-        Add-Member -InputObject $obj -NotePropertyName "MFA_Result" -NotePropertyValue $signIn.MfaDetail.AuthResult -PassThru
+        $obj.MFA_Method = $signIn.MfaDetail.AuthMethod
+        $obj.MFA_Result = $signIn.MfaDetail.AuthResult
     }
 
-    # Authentication steps (password, MFA, etc.)
     if ($signIn.AuthenticationDetails) {
         $steps = $signIn.AuthenticationDetails | ForEach-Object {
             "$($_.AuthenticationMethod): $($_.Succeeded)"
         }
-        Add-Member -InputObject $obj -NotePropertyName "AuthenticationSteps" -NotePropertyValue ($steps -join " | ") -PassThru
+        $obj.AuthenticationSteps = ($steps -join " | ")
     }
 
-    # Conditional Access policies applied
     if ($signIn.AppliedConditionalAccessPolicies) {
-        $caNames   = $signIn.AppliedConditionalAccessPolicies.DisplayName -join "; "
-        $caResults = $signIn.AppliedConditionalAccessPolicies.Result -join "; "
-        Add-Member -InputObject $obj -NotePropertyName "CA_Policies"   -NotePropertyValue $caNames -PassThru
-        Add-Member -InputObject $obj -NotePropertyName "CA_Results"    -NotePropertyValue $caResults -PassThru
+        $obj.CA_Policies = ($signIn.AppliedConditionalAccessPolicies.DisplayName -join "; ")
+        $obj.CA_Results = ($signIn.AppliedConditionalAccessPolicies.Result -join "; ")
     }
 
-    # Token age / freshness
-    Add-Member -InputObject $obj -NotePropertyName "TokenAge" -NotePropertyValue $signIn.TokenIssuerType -PassThru
-
-    # Output the fully expanded row
     $obj
 }
 
-# Export to CSV – this one will be perfect
-$OutputFile = "C:\SignInLogs_COMPLETE_$(Get-Date -Format yyyyMMdd_HHmm).csv"
-$Expanded | Sort-Object CreatedDateTime -Descending | Export-Csv -Path $OutputFile -NoTypeInformation -Encoding UTF8
+$Expanded | Sort-Object CreatedDateTime -Descending |
+    Export-Csv -Path $OutputPath -NoTypeInformation -Encoding UTF8
 
 Write-Host "Done! Full detailed report saved to:" -ForegroundColor Green
-Write-Host $OutputFile -ForegroundColor Cyan
-Write-Host "Total sign-ins exported:" $Expanded.Count -ForegroundColor Yellow
+Write-Host $OutputPath -ForegroundColor Cyan
+Write-Host "Total sign-ins exported: $($Expanded.Count)" -ForegroundColor Yellow
 
-Disconnect-MgGraph
+if ($Disconnect) {
+    Disconnect-MgGraph | Out-Null
+}
