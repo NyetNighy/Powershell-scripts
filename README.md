@@ -27,11 +27,14 @@ Scripts that **purge mail**, **reset passwords**, or **force password change** c
 ### `M365-Exchange/` — Exchange Online Administration
 | Script | Purpose |
 |--------|---------|
+| `AddFullPermissionToMailbox.ps1` | Grant Full Access (with optional AutoMapping) to one user on multiple mailboxes |
 | `AliasFinder.ps1` | Search all Exchange recipients (incl. soft-deleted) for an email alias |
 | `BlockProfilePictures365.ps1` | Create and apply no-photo OWA mailbox policy to all licensed users |
 | `OnlyAcceptFromPermNew.ps1` | Restrict M365 group email to approved senders only |
 | `PurgeEmailBySubject.ps1` | Purge emails by subject (Compliance search; requires **YES** confirm) |
 | `PurgeEmailByToAndSubject.ps1` | Purge emails by recipient + subject |
+| `PurgeEmailFromAndSubject.ps1` | Purge emails by From address + subject |
+| `PurgeEmailFromAndSubjectUpdated.ps1` | Updated purge by From and/or subject (Compliance search; SoftDelete or HardDelete) |
 | `PurgeEmailFromUpdated.ps1` | Purge emails by From address only |
 | `PurgeEmailFromUserLog.ps1` | Purge emails with audit logging |
 | `PurgeFromSubDisWAM.ps1` | Purge emails from sub-distribution groups via WAM |
@@ -120,6 +123,7 @@ Scripts that **purge mail**, **reset passwords**, or **force password change** c
 |--------|---------|
 | `ME5024_Disks.ps1` | PRTG custom sensor for Dell PowerVault ME5024 storage array |
 | `replace.ps1` | Fix curly quotes in PowerShell files |
+| `ShortcutDesktop.ps1` | Create a public desktop shortcut for PaperCut Print Deploy Client |
 
 ---
 
