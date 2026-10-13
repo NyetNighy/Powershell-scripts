@@ -15,7 +15,7 @@ General-purpose PowerShell scripts for Microsoft 365 administration — Exchange
 
 Scripts that **purge mail**, **reset passwords**, or **force password change** can permanently alter a tenant.
 
-- Purge scripts require typing **`YES`** before HardDelete (see `PurgeEmailBySubject.ps1`).
+- The purge script (`PurgeEmailFromAndSubjectUpdated.ps1`) requires explicit confirmation before SoftDelete or HardDelete.
 - Prefer a scoped search + review of item counts before confirming.
 - Run in a lab tenant first when testing.
 - Password-related `.txt` runbooks under `M365-Passwords/` are high-impact; convert to parameterized `.ps1` with `-WhatIf` before production use.
@@ -31,13 +31,7 @@ Scripts that **purge mail**, **reset passwords**, or **force password change** c
 | `AliasFinder.ps1` | Search all Exchange recipients (incl. soft-deleted) for an email alias |
 | `BlockProfilePictures365.ps1` | Create and apply no-photo OWA mailbox policy to all licensed users |
 | `OnlyAcceptFromPermNew.ps1` | Restrict M365 group email to approved senders only |
-| `PurgeEmailBySubject.ps1` | Purge emails by subject (Compliance search; requires **YES** confirm) |
-| `PurgeEmailByToAndSubject.ps1` | Purge emails by recipient + subject |
-| `PurgeEmailFromAndSubject.ps1` | Purge emails by From address + subject |
-| `PurgeEmailFromAndSubjectUpdated.ps1` | Updated purge by From and/or subject (Compliance search; SoftDelete or HardDelete) |
-| `PurgeEmailFromUpdated.ps1` | Purge emails by From address only |
-| `PurgeEmailFromUserLog.ps1` | Purge emails with audit logging |
-| `PurgeFromSubDisWAM.ps1` | Purge emails from sub-distribution groups via WAM |
+| `PurgeEmailFromAndSubjectUpdated.ps1` | Purge emails by From and/or subject (Compliance search; SoftDelete or HardDelete) |
 
 ### `M365-Azure/` — Azure AD / Microsoft Graph / Entra ID
 | Script | Purpose |
