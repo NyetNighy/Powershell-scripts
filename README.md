@@ -25,6 +25,10 @@ Scripts that **purge mail**, **reset passwords**, **disable sign-in**, **disable
 
 ## 📂 Folder Structure
 
+### [`CSVs/`](CSVs/) — Sample CSV templates
+
+Ready-to-copy example files for every script that reads a CSV. See [CSVs/README.md](CSVs/README.md) and the [CSV column requirements](#csv-column-requirements) section below.
+
 ### `M365-Exchange/` — Exchange Online Administration
 | Script | Purpose |
 |--------|---------|
@@ -122,12 +126,14 @@ Scripts that **purge mail**, **reset passwords**, **disable sign-in**, **disable
 
 Scripts that read a CSV expect a **header row**. Column names are matched case-insensitively where noted. Extra columns are ignored. Empty rows and blank identity cells are skipped.
 
+**Sample templates:** [`CSVs/`](CSVs/)
+
 | Script | Required columns | Accepted alternate names | Notes |
 |--------|------------------|---------------------------|--------|
-| `M365-Passwords/BulkUpdatePasswords.ps1` | Identity + password | Identity: `UserPrincipalName`, `UPN`, `Mail`, `Email` · Password: `Password`, `NewPassword`, `Pwd` | One user per row. Script previews the first 10 rows and asks whether to force change at next sign-in. |
-| `M365-Azure/AddCsvUsersToGroup365.ps1` | Identity | `UserPrincipalName`, `Mail`, `Email`, `UPN` | Resolves users by UPN first, then by mail. Duplicates are de-duplicated. |
-| `M365-Azure/BlockSignInFromCsv.ps1` | Identity | `UserPrincipalName`, `UPN`, `Mail`, `Email`, `EmailAddress` | Sets `AccountEnabled = false`. Destructive — confirm carefully. |
-| `M365-SharePoint/Studentfoldercreation.ps1` | `Surname` + forename | Forename: `Forname` or `Forename` | Creates folders named `Surname, Forename`. Subfolders are entered at the prompt (not from the CSV). |
+| `M365-Passwords/BulkUpdatePasswords.ps1` | Identity + password | Identity: `UserPrincipalName`, `UPN`, `Mail`, `Email` · Password: `Password`, `NewPassword`, `Pwd` | One user per row. Script previews the first 10 rows and asks whether to force change at next sign-in. Template: [CSVs/BulkUpdatePasswords-example.csv](CSVs/BulkUpdatePasswords-example.csv) |
+| `M365-Azure/AddCsvUsersToGroup365.ps1` | Identity | `UserPrincipalName`, `Mail`, `Email`, `UPN` | Resolves users by UPN first, then by mail. Duplicates are de-duplicated. Template: [CSVs/AddCsvUsersToGroup365-example.csv](CSVs/AddCsvUsersToGroup365-example.csv) |
+| `M365-Azure/BlockSignInFromCsv.ps1` | Identity | `UserPrincipalName`, `UPN`, `Mail`, `Email`, `EmailAddress` | Sets `AccountEnabled = false`. Destructive — confirm carefully. Template: [CSVs/BlockSignInFromCsv-example.csv](CSVs/BlockSignInFromCsv-example.csv) |
+| `M365-SharePoint/Studentfoldercreation.ps1` | `Surname` + forename | Forename: `Forname` or `Forename` | Creates folders named `Surname, Forename`. Subfolders are entered at the prompt (not from the CSV). Template: [CSVs/Studentfoldercreation-example.csv](CSVs/Studentfoldercreation-example.csv) |
 
 ### Example CSVs
 
@@ -192,7 +198,7 @@ Smith,John
 .\M365-SharePoint\Studentfoldercreation.ps1
 ```
 
-Each script prompts for the CSV path at runtime.
+Each script prompts for the CSV path at runtime. Sample files are in [`CSVs/`](CSVs/).
 
 ---
 
