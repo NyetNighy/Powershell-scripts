@@ -36,6 +36,7 @@ Scripts that **purge mail**, **reset passwords**, or **force password change** c
 ### `M365-Azure/` — Azure AD / Microsoft Graph / Entra ID
 | Script | Purpose |
 |--------|---------|
+| `AddCsvUsersToGroup365.ps1` | Add users from a CSV (UPN/Mail/Email) to an existing M365 or Security group by Object ID |
 | `Check-All-M365-Objects.ps1` | Check all M365 users/groups for directory sync status, convert cloud-only |
 | `DisableADSYNClink365.ps1` | Disable Azure AD Connect sync via Graph API |
 | `DisableADSYNClink365New.ps1` | Disable AAD Connect sync (module-based, admin-checked) |
