@@ -118,6 +118,53 @@ Scripts that **purge mail**, **reset passwords**, **disable sign-in**, **disable
 
 ---
 
+## 📄 CSV column requirements
+
+Scripts that read a CSV expect a **header row**. Column names are matched case-insensitively where noted. Extra columns are ignored. Empty rows and blank identity cells are skipped.
+
+| Script | Required columns | Accepted alternate names | Notes |
+|--------|------------------|---------------------------|--------|
+| `M365-Passwords/BulkUpdatePasswords.ps1` | Identity + password | Identity: `UserPrincipalName`, `UPN`, `Mail`, `Email` · Password: `Password`, `NewPassword`, `Pwd` | One user per row. Script previews the first 10 rows and asks whether to force change at next sign-in. |
+| `M365-Azure/AddCsvUsersToGroup365.ps1` | Identity | `UserPrincipalName`, `Mail`, `Email`, `UPN` | Resolves users by UPN first, then by mail. Duplicates are de-duplicated. |
+| `M365-Azure/BlockSignInFromCsv.ps1` | Identity | `UserPrincipalName`, `UPN`, `Mail`, `Email`, `EmailAddress` | Sets `AccountEnabled = false`. Destructive — confirm carefully. |
+| `M365-SharePoint/Studentfoldercreation.ps1` | `Surname` + forename | Forename: `Forname` or `Forename` | Creates folders named `Surname, Forename`. Subfolders are entered at the prompt (not from the CSV). |
+
+### Example CSVs
+
+**Bulk password reset** (`BulkUpdatePasswords.ps1`):
+
+```csv
+UserPrincipalName,Password
+jane.doe@contoso.com,TempP@ssw0rd1!
+john.smith@contoso.com,TempP@ssw0rd2!
+```
+
+**Add users to a group** (`AddCsvUsersToGroup365.ps1`):
+
+```csv
+UserPrincipalName
+jane.doe@contoso.com
+john.smith@contoso.com
+```
+
+**Block sign-in** (`BlockSignInFromCsv.ps1`):
+
+```csv
+Email
+jane.doe@contoso.com
+john.smith@contoso.com
+```
+
+**Student folders** (`Studentfoldercreation.ps1`):
+
+```csv
+Surname,Forename
+Doe,Jane
+Smith,John
+```
+
+---
+
 ## 📋 Requirements
 
 - **Exchange Online** scripts → `ExchangeOnlineManagement` module v3.9.0+
@@ -136,13 +183,16 @@ Scripts that **purge mail**, **reset passwords**, **disable sign-in**, **disable
 .\Security-Admin\ExportSignLogs.ps1 -OutputPath D:\Reports\signins.csv
 ```
 
-### Bulk password reset (CSV)
-
-CSV columns: `UserPrincipalName` (or `UPN`/`Mail`/`Email`) and `Password` (or `NewPassword`).
+### Run a CSV-based script
 
 ```powershell
 .\M365-Passwords\BulkUpdatePasswords.ps1
+.\M365-Azure\AddCsvUsersToGroup365.ps1
+.\M365-Azure\BlockSignInFromCsv.ps1
+.\M365-SharePoint\Studentfoldercreation.ps1
 ```
+
+Each script prompts for the CSV path at runtime.
 
 ---
 
