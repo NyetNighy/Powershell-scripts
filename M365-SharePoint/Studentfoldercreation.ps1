@@ -1,28 +1,63 @@
-# Create student folders (and subfolders) in a SharePoint document library from a CSV.
-# CSV columns expected: Surname, Forname (or Forename).
+#Requires -Version 5.1
+<#
+.SYNOPSIS
+    Create student folders (and optional subfolders) in a SharePoint document library from a CSV.
+    CSV columns: Surname, Forname (or Forename).
+    All site/library/CSV values are prompted interactively.
+#>
 
-$SiteUrl     = "https://yourdoamin.sharepoint.com/sites/PupilFilesNew"
-$LibraryName = "Shared Documents"
-$CSVPath     = "C:\Powershell\students.csv"
-
-$Subfolders = @(
-    "FOLDERNAME", "FOLDERNAME", "FOLDERNAME", "FOLDERNAME"
-)
-
-$TenantId = "YOUR_TENANT.onmicrosoft.com"
-
-if (-not (Test-Path -LiteralPath $CSVPath)) {
-    Write-Host "CSV not found: $CSVPath" -ForegroundColor Red
-    exit 1
-}
-
-$Body = @{
-    client_id = "14d82eec-204b-4c2f-b7e8-296a70dab67e"
-    scope     = "https://graph.microsoft.com/.default"
-    tenant    = $TenantId
-}
+$ErrorActionPreference = "Stop"
 
 try {
+    $SiteUrl = Read-Host "SharePoint site URL (e.g. https://contoso.sharepoint.com/sites/PupilFiles)"
+    if ([string]::IsNullOrWhiteSpace($SiteUrl)) { throw "Site URL is required." }
+    $SiteUrl = $SiteUrl.Trim().TrimEnd('/')
+
+    $LibraryName = Read-Host "Document library name (default: Shared Documents)"
+    if ([string]::IsNullOrWhiteSpace($LibraryName)) { $LibraryName = "Shared Documents" }
+    $LibraryName = $LibraryName.Trim()
+
+    $CsvPath = Read-Host "Full path to students CSV (columns: Surname, Forname/Forename)"
+    if ([string]::IsNullOrWhiteSpace($CsvPath)) { throw "CSV path is required." }
+    $CsvPath = $CsvPath.Trim().Trim('"')
+
+    if (-not (Test-Path -LiteralPath $CsvPath)) {
+        throw "CSV not found: $CsvPath"
+    }
+
+    $subInput = Read-Host "Subfolder names to create under each student (comma-separated, or leave blank for none)"
+    $Subfolders = @()
+    if (-not [string]::IsNullOrWhiteSpace($subInput)) {
+        $Subfolders = $subInput -split "," | ForEach-Object { $_.Trim() } | Where-Object { $_ }
+    }
+
+    $TenantId = Read-Host "Tenant domain (e.g. contoso.onmicrosoft.com)"
+    if ([string]::IsNullOrWhiteSpace($TenantId)) { throw "Tenant domain is required." }
+    $TenantId = $TenantId.Trim()
+
+    $People = Import-Csv -Path $CsvPath -ErrorAction Stop
+    if (-not $People -or $People.Count -eq 0) {
+        throw "CSV is empty."
+    }
+
+    Write-Host "`nSummary:" -ForegroundColor Cyan
+    Write-Host "  Site:     $SiteUrl"
+    Write-Host "  Library:  $LibraryName"
+    Write-Host "  CSV rows: $($People.Count)"
+    Write-Host "  Subfolders: $(if ($Subfolders.Count) { $Subfolders -join ', ' } else { '(none)' })"
+
+    $confirm = Read-Host "`nCreate folders for these students? (Y/N)"
+    if ($confirm -notmatch '^[Yy]$') {
+        Write-Host "Cancelled." -ForegroundColor Yellow
+        return
+    }
+
+    $Body = @{
+        client_id = "14d82eec-204b-4c2f-b7e8-296a70dab67e"
+        scope     = "https://graph.microsoft.com/.default"
+        tenant    = $TenantId
+    }
+
     Write-Host "Opening device login. Go to https://microsoft.com/devicelogin and enter the code shown below..." -ForegroundColor Yellow
     $DeviceCodeRequest = Invoke-RestMethod -Method POST `
         -Uri "https://login.microsoftonline.com/$TenantId/oauth2/v2.0/devicecode" `
@@ -73,23 +108,24 @@ try {
         -Uri "https://graph.microsoft.com/v1.0/sites/$($Site.id)/drives" `
         -Headers $Headers -ErrorAction Stop |
         Select-Object -ExpandProperty value |
-        Where-Object { $_.name -eq $LibraryName -or $_.name -eq "Documents" }
+        Where-Object { $_.name -eq $LibraryName -or $_.name -eq "Documents" } |
+        Select-Object -First 1
 
     if (-not $Drive) {
-        Write-Host "Could not find library '$LibraryName'." -ForegroundColor Red
-        exit 1
+        throw "Could not find library '$LibraryName'."
     }
 
     Write-Host "Connected to library: $($Drive.name)" -ForegroundColor Green
 
-    $People = Import-Csv -Path $CSVPath -ErrorAction Stop
     $created = 0
     $skipped = 0
     $errors = 0
 
     foreach ($Person in $People) {
-        $Surname  = ($Person.Surname  ?? "").Trim()
-        $Forename = if ($Person.Forname) { ($Person.Forname).Trim() } elseif ($Person.Forename) { ($Person.Forename).Trim() } else { "" }
+        $Surname  = ("$($Person.Surname)").Trim()
+        $Forename = if ($Person.Forname) { ("$($Person.Forname)").Trim() }
+                    elseif ($Person.Forename) { ("$($Person.Forename)").Trim() }
+                    else { "" }
 
         if ([string]::IsNullOrWhiteSpace($Surname) -or [string]::IsNullOrWhiteSpace($Forename)) {
             Write-Warning "Skipping row with missing name"
