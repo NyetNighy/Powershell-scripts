@@ -104,9 +104,7 @@ Scripts that **purge mail**, **reset passwords**, **disable sign-in**, **disable
 |------|---------|
 | `4.8net.ps1` | .NET 4.8 network configuration |
 | `DGSG.txt` | **Notes** — Azure AD group type conversion |
-| `Firewall Intune.txt` | **Notes** — Intune firewall endpoints |
 | `Remote search and uninstall..txt` | **Notes** — remote uninstall reference |
-| `SNMP error #-2003.txt` | **Notes** — SNMP troubleshooting |
 | `tls.txt` | **Notes** — TLS configuration |
 | `Whitelist.txt` | **Notes** — SharePoint/Exchange whitelist |
 | `sharepoint connect..txt` | **Notes** — SharePoint connection commands |
