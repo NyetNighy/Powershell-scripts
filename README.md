@@ -42,6 +42,7 @@ Ready-to-copy example files for every script that reads a CSV. See [CSVs/README.
 | Script | Purpose |
 |--------|---------|
 | `AddCsvUsersToGroup365.ps1` | Add users from a CSV (UPN/Mail/Email) to an existing M365 or Security group by Object ID |
+| `AddOwnerToEmptyM365Groups.ps1` | Find Microsoft 365 groups with zero members/owners and add the signed-in Global Admin as Owner (and Member) |
 | `BlockSignInFromCsv.ps1` | Disable sign-in for users listed in a CSV (Graph; replaces old AzureAD Emaildisable) |
 | `Check-All-M365-Objects.ps1` | Optional sync disable + report/convert dir-synced groups/mailboxes (all steps confirmed) |
 | `DisableADSYNClink365.ps1` | Disable Azure AD Connect sync via Graph (confirmation required) |
