@@ -230,6 +230,12 @@ Each script prompts for the CSV path at runtime. Sample files are in [CSVs/](CSV
 
 ---
 
+## Contributing
+
+Contributions are welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md) for script standards, folder placement, and the pull request process.
+
+---
+
 ## Code of Conduct
 
 This project adheres to the [Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code. Please report unacceptable behaviour to the repository maintainer.
