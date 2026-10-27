@@ -242,6 +242,10 @@ This project adheres to the [Contributor Covenant Code of Conduct](CODE_OF_CONDU
 
 ---
 
-## Licence
+## License
 
-MIT — see [LICENSE](LICENSE).
+This project is licensed under the [MIT License](LICENSE).
+
+You are free to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the software, subject to including the copyright notice and permission notice in all copies or substantial portions of the software.
+
+The software is provided "as is", without warranty of any kind.
