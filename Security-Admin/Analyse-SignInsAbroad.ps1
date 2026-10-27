@@ -1,21 +1,21 @@
 param(
     [string]$InputFile,
-
-    [string]$OutputFolder
+    [string]$OutputPath
 )
 
-if (-not $InputFile) {
-    Add-Type -AssemblyName System.Windows.Forms
-    $dialog = New-Object System.Windows.Forms.OpenFileDialog
-    $dialog.Filter = 'CSV files (*.csv)|*.csv|All files (*.*)|*.*'
-    $dialog.Title = 'Select sign-in logs CSV'
-    $dialog.InitialDirectory = [Environment]::GetFolderPath('UserProfile') + '\Downloads'
+Add-Type -AssemblyName System.Windows.Forms
 
-    if ($dialog.ShowDialog() -ne [System.Windows.Forms.DialogResult]::OK) {
-        Write-Host 'No file selected. Exiting.' -ForegroundColor Yellow
+if (-not $InputFile) {
+    $openDialog = New-Object System.Windows.Forms.OpenFileDialog
+    $openDialog.Filter = 'CSV files (*.csv)|*.csv|All files (*.*)|*.*'
+    $openDialog.Title = 'Select sign-in logs CSV'
+    $openDialog.InitialDirectory = [Environment]::GetFolderPath('UserProfile') + '\Downloads'
+
+    if ($openDialog.ShowDialog() -ne [System.Windows.Forms.DialogResult]::OK) {
+        Write-Host 'No input file selected. Exiting.' -ForegroundColor Yellow
         return
     }
-    $InputFile = $dialog.FileName
+    $InputFile = $openDialog.FileName
 }
 
 if (-not (Test-Path $InputFile)) {
@@ -23,8 +23,20 @@ if (-not (Test-Path $InputFile)) {
     return
 }
 
-if (-not $OutputFolder) {
-    $OutputFolder = Split-Path $InputFile -Parent
+if (-not $OutputPath) {
+    $defaultName = "Successful_Abroad_{0:yyyyMMdd-HHmmss}.csv" -f (Get-Date)
+    $saveDialog = New-Object System.Windows.Forms.SaveFileDialog
+    $saveDialog.Filter = 'CSV files (*.csv)|*.csv|All files (*.*)|*.*'
+    $saveDialog.Title = 'Save analysis results as'
+    $saveDialog.InitialDirectory = Split-Path $InputFile -Parent
+    $saveDialog.FileName = $defaultName
+    $saveDialog.OverwritePrompt = $true
+
+    if ($saveDialog.ShowDialog() -ne [System.Windows.Forms.DialogResult]::OK) {
+        Write-Host 'No output location selected. Exiting.' -ForegroundColor Yellow
+        return
+    }
+    $OutputPath = $saveDialog.FileName
 }
 
 Write-Host "Loading CSV: $InputFile" -ForegroundColor Cyan
@@ -130,7 +142,6 @@ if ($results.Count -eq 0) {
     $results | Group-Object Username | Sort-Object Count -Descending |
         Select-Object Name, Count | Format-Table -AutoSize
 
-    $exportPath = Join-Path $OutputFolder ("Successful_Abroad_{0:yyyyMMdd-HHmmss}.csv" -f (Get-Date))
-    $results | Export-Csv -Path $exportPath -NoTypeInformation -Encoding UTF8
-    Write-Host "`nExported to: $exportPath" -ForegroundColor Green
+    $results | Export-Csv -Path $OutputPath -NoTypeInformation -Encoding UTF8
+    Write-Host "`nExported to: $OutputPath" -ForegroundColor Green
 }
