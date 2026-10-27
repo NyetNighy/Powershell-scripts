@@ -23,8 +23,10 @@ if (-not (Test-Path $InputFile)) {
     return
 }
 
+$timestamp = Get-Date -Format 'yyyyMMdd-HHmmss'
+
 if (-not $OutputPath) {
-    $defaultName = "Successful_Abroad_{0:yyyyMMdd-HHmmss}.csv" -f (Get-Date)
+    $defaultName = "Successful_Abroad_$timestamp.csv"
     $saveDialog = New-Object System.Windows.Forms.SaveFileDialog
     $saveDialog.Filter = 'CSV files (*.csv)|*.csv|All files (*.*)|*.*'
     $saveDialog.Title = 'Save analysis results as'
@@ -38,6 +40,17 @@ if (-not $OutputPath) {
     }
     $OutputPath = $saveDialog.FileName
 }
+
+# Always ensure timestamp is in the final filename
+$dir  = Split-Path $OutputPath -Parent
+$base = [System.IO.Path]::GetFileNameWithoutExtension($OutputPath)
+$ext  = [System.IO.Path]::GetExtension($OutputPath)
+if ($ext -eq '') { $ext = '.csv' }
+
+if ($base -notmatch '\d{8}-\d{6}') {
+    $base = "${base}_$timestamp"
+}
+$OutputPath = Join-Path $dir "$base$ext"
 
 Write-Host "Loading CSV: $InputFile" -ForegroundColor Cyan
 
