@@ -101,7 +101,9 @@ Ready-to-copy example files for every script that reads a CSV. See [CSVs/README.
 ### `Security-Admin/` — Security, Audit & Hardening
 | Script | Purpose |
 |--------|---------|
-| `ExportSignLogs.ps1` | Export full M365 sign-in audit logs via Graph (`-OutputPath` optional) |
+| `ExportSignLogs.ps1` | Export M365 sign-in audit logs via Graph (`-OutputPath` optional) |
+| `Analyse-SignInsAbroad.ps1` | Analyse a sign-in CSV for successful logins from outside the UK (file picker + timestamped export) |
+| `Export-And-Analyse-SignIns.ps1` | Export sign-in logs then immediately analyse for successful non-UK access |
 | `FastStartUpDisable.ps1` | Disable Windows Fast Startup via registry |
 
 ### `General-Reference/` — Docs, Notes & Reference Material
@@ -180,15 +182,25 @@ Smith,John
 - **Active Directory** scripts → RSAT AD module on Windows
 - Tested on **Windows PowerShell 5.1** or **PowerShell 7+**
 
-### ExportSignLogs example
+### Sign-in log scripts
 
 ```powershell
-# Default: CSV in current directory
+# Export sign-in logs via Graph
 .\Security-Admin\ExportSignLogs.ps1
-
-# Custom path
 .\Security-Admin\ExportSignLogs.ps1 -OutputPath D:\Reports\signins.csv
+
+# Analyse an existing CSV for successful sign-ins from outside the UK
+# Opens file picker for input, Save dialog for output (timestamp always added)
+.\Security-Admin\Analyse-SignInsAbroad.ps1
+.\Security-Admin\Analyse-SignInsAbroad.ps1 -InputFile "C:\Downloads\InteractiveSignIns.csv"
+
+# Export then analyse in one run
+.\Security-Admin\Export-And-Analyse-SignIns.ps1
 ```
+
+`Analyse-SignInsAbroad.ps1` supports both:
+- Entra portal Interactive Sign-ins CSV exports (handles duplicate column headers)
+- CSV output from `ExportSignLogs.ps1`
 
 ### Run a CSV-based script
 
