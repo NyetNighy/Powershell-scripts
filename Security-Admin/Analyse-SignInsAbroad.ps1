@@ -1,16 +1,33 @@
 param(
-    [Parameter(Mandatory = $true)]
     [string]$InputFile,
 
-    [string]$OutputFolder = (Split-Path $InputFile -Parent)
+    [string]$OutputFolder
 )
+
+if (-not $InputFile) {
+    Add-Type -AssemblyName System.Windows.Forms
+    $dialog = New-Object System.Windows.Forms.OpenFileDialog
+    $dialog.Filter = 'CSV files (*.csv)|*.csv|All files (*.*)|*.*'
+    $dialog.Title = 'Select sign-in logs CSV'
+    $dialog.InitialDirectory = [Environment]::GetFolderPath('UserProfile') + '\Downloads'
+
+    if ($dialog.ShowDialog() -ne [System.Windows.Forms.DialogResult]::OK) {
+        Write-Host 'No file selected. Exiting.' -ForegroundColor Yellow
+        return
+    }
+    $InputFile = $dialog.FileName
+}
 
 if (-not (Test-Path $InputFile)) {
     Write-Error "File not found: $InputFile"
     return
 }
 
-Write-Host "Loading CSV..." -ForegroundColor Cyan
+if (-not $OutputFolder) {
+    $OutputFolder = Split-Path $InputFile -Parent
+}
+
+Write-Host "Loading CSV: $InputFile" -ForegroundColor Cyan
 
 # Handle portal CSVs that have duplicate column names (e.g. "Incoming token type")
 $raw = Get-Content -Path $InputFile -Encoding UTF8
@@ -51,19 +68,19 @@ if ($isPortalFormat) {
         $country = if ($parts.Count -ge 1) { $parts[-1].Trim() } else { 'Unknown' }
 
         [PSCustomObject]@{
-            DateUTC         = $_.'Date (UTC)'
-            User            = $_.User
-            Username        = $_.Username
-            IPAddress       = $_.'IP address'
-            Location        = $_.Location
-            Country         = $country
-            Application     = $_.Application
-            ClientApp       = $_.'Client app'
-            Browser         = $_.Browser
-            OperatingSystem = $_.'Operating System'
-            DeviceID        = $_.'Device ID'
+            DateUTC           = $_.'Date (UTC)'
+            User              = $_.User
+            Username          = $_.Username
+            IPAddress         = $_.'IP address'
+            Location          = $_.Location
+            Country           = $country
+            Application       = $_.Application
+            ClientApp         = $_.'Client app'
+            Browser           = $_.Browser
+            OperatingSystem   = $_.'Operating System'
+            DeviceID          = $_.'Device ID'
             ConditionalAccess = $_.'Conditional Access'
-            MFAResult       = $_.'Multifactor authentication result'
+            MFAResult         = $_.'Multifactor authentication result'
         }
     }
 }
@@ -76,19 +93,19 @@ elseif ($isGraphFormat) {
 
     $results = $abroadSuccess | ForEach-Object {
         [PSCustomObject]@{
-            DateUTC         = $_.CreatedDateTime
-            User            = $_.UserDisplayName
-            Username        = $_.UserPrincipalName
-            IPAddress       = $_.IPAddress
-            Location        = "$($_.City), $($_.State), $($_.Country)"
-            Country         = $_.Country
-            Application     = $_.AppDisplayName
-            ClientApp       = $_.ClientAppUsed
-            Browser         = $_.DeviceBrowser
-            OperatingSystem = $_.DeviceOS
-            DeviceID        = $_.DeviceId
+            DateUTC           = $_.CreatedDateTime
+            User              = $_.UserDisplayName
+            Username          = $_.UserPrincipalName
+            IPAddress         = $_.IPAddress
+            Location          = "$($_.City), $($_.State), $($_.Country)"
+            Country           = $_.Country
+            Application       = $_.AppDisplayName
+            ClientApp         = $_.ClientAppUsed
+            Browser           = $_.DeviceBrowser
+            OperatingSystem   = $_.DeviceOS
+            DeviceID          = $_.DeviceId
             ConditionalAccess = $_.ConditionalAccessStatus
-            MFAResult       = $_.MFA_Result
+            MFAResult         = $_.MFA_Result
         }
     }
 }
