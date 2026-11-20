@@ -99,6 +99,7 @@ Sample CSV templates for scripts that accept file input. See [CSVs/README.md](CS
 
 | Script | Description |
 |--------|-------------|
+| `ADJoinedRAM.ps1` | Query RAM (GB) on enabled domain computers with recent logon; export CSV report |
 | `BitlockerCount.ps1` | Count BitLocker-enabled computers with recent logon |
 | `DetectBitlockerPIN.ps1` | Detect TPM+PIN BitLocker protectors |
 | `UsersNon-Log1Year.ps1` | Find enabled AD users with no logon in the past year |
