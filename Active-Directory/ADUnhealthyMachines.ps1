@@ -90,7 +90,7 @@ $Results = foreach ($Computer in $Computers) {
 Write-Progress -Activity "Checking Machine Health" -Completed
 
 $Results |
-    Sort-Object IsUnhealthy -Descending, ComputerName |
+    Sort-Object @{ Expression = 'IsUnhealthy'; Descending = $true }, ComputerName |
     Export-Csv $OutputFile -NoTypeInformation -Encoding UTF8
 
 $Success   = ($Results | Where-Object Online).Count
